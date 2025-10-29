@@ -27,6 +27,30 @@
         <input type="radio" name="gender" value="female" {{ $gender == 'female' ? 'checked' : '' }}> Female
         <input type="radio" name="gender" value="other" {{ $gender == 'other' ? 'checked' : '' }}> Other
     </div>
+    <div class="col-md-6 mb-3">
+        <label>Profile Image</label>
+        <input type="file" name="profile_image" class="form-control">
+
+        @if(!empty($contact->profile_image))
+            <div class="mt-2">
+                <img src="{{ asset('storage/' . $contact->profile_image) }}" 
+                    alt="Profile Image" width="80" class="rounded">
+            </div>
+        @endif
+    </div>
+    <div class="col-md-6 mb-3">
+        <label>Additional File</label>
+        <input type="file" name="additional_file" class="form-control">
+        @if(!empty($contact->additional_file))
+            <div class="mt-2">
+                <a href="{{ asset('storage/' . $contact->additional_file) }}" 
+                target="_blank" class="btn btn-outline-secondary btn-sm">
+                    View Existing File
+                </a>
+            </div>
+        @endif
+    </div>
+
 </div>
 
 <hr>
