@@ -13,6 +13,7 @@
             <option value="other">Other</option>
         </select>
         <button class="btn btn-primary ms-2" data-bs-toggle="modal" data-bs-target="#contactModal" onclick="createContact()">Add Contact</button>
+        <a class="btn btn-primary ms-2" href="{{ route('custom-fields.index') }}">Add Custom Fields</a>
     </div>
 
     <div id="contacts-table">

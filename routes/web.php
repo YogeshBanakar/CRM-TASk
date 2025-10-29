@@ -21,3 +21,4 @@ Route::resource('contacts', ContactController::class)->except(['show']);
 Route::post('/contacts/merge-preview', [ContactController::class, 'mergePreview'])->name('contacts.merge-preview');
 Route::post('/contacts/merge', [ContactController::class, 'merge'])->name('contacts.merge');
 Route::get('/contacts/search', [ContactController::class, 'search'])->name('contacts.search');
+Route::resource('custom-fields', CustomFieldController::class)->except(['show']);
