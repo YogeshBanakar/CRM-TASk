@@ -2,8 +2,10 @@
 
 @section('content')
     <div class="container">
-        <h2>Manage Custom Fields</h2>
-
+       <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2>Manage Custom Fields</h2>
+            <a href="{{ url('/contacts') }}" class="btn btn-secondary">← Back to Contacts</a>
+        </div>
         <form id="addFieldForm" class="mb-4">
             @csrf
             <div class="row">
@@ -26,6 +28,7 @@
                     <button type="submit" class="btn btn-success">Add Field</button>
                 </div>
             </div>
+
         </form>
 
         <table class="table">
