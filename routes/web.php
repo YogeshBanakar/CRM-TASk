@@ -15,11 +15,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
 Route::get('/contacts/all', [ContactController::class, 'getAll']);
-Route::get('/contacts', [ContactController::class, 'index'])->name('contacts.index');
+Route::get('/', [ContactController::class, 'index'])->name('contacts.index');
 Route::resource('contacts', ContactController::class)->except(['show']);
 Route::post('/contacts/merge-preview', [ContactController::class, 'mergePreview'])->name('contacts.merge-preview');
 Route::post('/contacts/merge', [ContactController::class, 'merge'])->name('contacts.merge');
