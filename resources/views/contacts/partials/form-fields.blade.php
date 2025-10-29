@@ -52,25 +52,25 @@
     </div>
 
 </div>
-
-<hr>
-<h5>Custom Fields</h5>
-<div id="custom-fields">
-    @foreach($customFields as $field)
-        @php
-            $value = $contact->customValues
-                        ->where('custom_field_id', $field->id)
-                        ->first()
-                        ->value ?? '';
-        @endphp
-        <div class="mb-3">
-            <label>{{ $field->name }}</label>
-            @if($field->type === 'text')
-                <input type="text" name="custom_fields[{{ $field->id }}]" class="form-control" value="{{ $value }}">
-            @elseif($field->type === 'date')
-                <input type="date" name="custom_fields[{{ $field->id }}]" class="form-control" value="{{ $value }}">
-            @endif
-        </div>
-    @endforeach
-</div>
-
+@if($customFields->count() > 0)
+    <hr>
+    <h5>Custom Fields</h5>
+    <div id="custom-fields">
+        @foreach($customFields as $field)
+            @php
+                $value = $contact->customValues
+                            ->where('custom_field_id', $field->id)
+                            ->first()
+                            ->value ?? '';
+            @endphp
+            <div class="mb-3">
+                <label>{{ $field->name }}</label>
+                @if($field->type === 'text')
+                    <input type="text" name="custom_fields[{{ $field->id }}]" class="form-control" value="{{ $value }}">
+                @elseif($field->type === 'date')
+                    <input type="date" name="custom_fields[{{ $field->id }}]" class="form-control" value="{{ $value }}">
+                @endif
+            </div>
+        @endforeach
+    </div>
+@endif
