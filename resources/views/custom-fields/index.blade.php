@@ -20,9 +20,11 @@
                     </select>
                 </div>
                 <div class="col-md-3" id="optionsGroup" style="display:none;">
-                    <input type="text" name="options[]" class="form-control mb-1" placeholder="Option 1">
-                    <input type="text" name="options[]" class="form-control" placeholder="Option 2">
-                    <small class="text-muted">Add more with JS if needed</small>
+                    <div id="dropdownOptions">
+                        <input type="text" name="options[]" class="form-control mb-1" placeholder="Option 1">
+                        <input type="text" name="options[]" class="form-control mb-1" placeholder="Option 2">
+                    </div>
+                    <button type="button" id="addOption" class="btn btn-sm btn-outline-primary mt-1">+ Add Option</button>
                 </div>
                 <div class="col-md-2">
                     <button type="submit" class="btn btn-success">Add Field</button>
@@ -57,12 +59,69 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         $(document).ready(function () {
-
             // Toggle dropdown options
             $('#fieldType').change(function() {
                 $('#optionsGroup').toggle($(this).val() === 'dropdown');
             });
+            
+            function ensureBaseOptions() {
+                const $container = $('#dropdownOptions');
+                if ($container.find('input[name="options[]"]').length < 2) {
+                    $container.empty();
+                    $container.append(baseOptionHtml(1));
+                    $container.append(baseOptionHtml(2));
+                }
+            }
 
+            function baseOptionHtml(n) {
+                return `<div class="input-group mb-2 base-option">
+                            <input type="text" name="options[]" class="form-control" placeholder="Option ${n}">
+                        </div>`;
+            }
+
+            // Renumber all option placeholders and handle remove buttons visibility
+            function renumberOptions() {
+                const $inputs = $('#dropdownOptions').find('input[name="options[]"]');
+                $inputs.each(function(index) {
+                    const number = index + 1;
+                    $(this).attr('placeholder', `Option ${number}`);
+                    // ensure parent div has correct classes
+                    const $parent = $(this).closest('.input-group');
+                    if (index < 2) {
+                        // first two: remove any remove button and mark as base-option
+                        $parent.removeClass('extra-option').addClass('base-option');
+                        $parent.find('.remove-option').remove();
+                    } else {
+                        // extra ones: ensure remove button exists and mark as extra-option
+                        $parent.removeClass('base-option').addClass('extra-option');
+                        if ($parent.find('.remove-option').length === 0) {
+                            $parent.append('<button type="button" class="btn btn-outline-danger remove-option">✕</button>');
+                        }
+                    }
+                });
+            }
+
+            // Add new option
+            $('#addOption').click(function() {
+                // append new extra option (without using a global counter)
+                $('#dropdownOptions').append(`
+                    <div class="input-group mb-2 extra-option">
+                        <input type="text" name="options[]" class="form-control" placeholder="Option">
+                        <button type="button" class="btn btn-outline-danger remove-option">✕</button>
+                    </div>
+                `);
+                renumberOptions();
+            });
+
+            // Remove an extra option
+            $(document).on('click', '.remove-option', function() {
+                $(this).closest('.input-group').remove();
+                renumberOptions();
+            });
+
+            // init
+            ensureBaseOptions();
+            renumberOptions();
             // Add new field
             $('#addFieldForm').submit(function(e) {
                 e.preventDefault();
