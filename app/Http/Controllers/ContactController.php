@@ -30,7 +30,7 @@ class ContactController extends Controller
 
         $contacts = Contact::whereNotIn('status', ['merged', 'deleted'])
             ->with('customValues.customField')
-            ->latest()
+              ->orderBy('id', 'asc')
             ->get();
 
         $customFields = CustomField::all();
@@ -57,7 +57,7 @@ class ContactController extends Controller
             $query->where('gender', $request->gender);
         }
 
-        $contacts = $query->with('customValues.customField')->latest()->get();
+        $contacts = $query->with('customValues.customField')->orderBy('id', 'asc')->get();
 
         return view('contacts.partials.table', compact('contacts'))->render();
     }

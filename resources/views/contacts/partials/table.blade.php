@@ -12,7 +12,7 @@
         </tr>
     </thead>
     <tbody>
-        @forelse($contacts as $contact)
+        @forelse($contacts as $index => $contact)
         <tr>
             <td>{{ $contact->id }}</td>
             <td>
