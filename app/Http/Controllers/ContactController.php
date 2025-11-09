@@ -30,7 +30,7 @@ class ContactController extends Controller
 
         $contacts = Contact::whereNotIn('status', ['merged', 'deleted'])
             ->with('customValues.customField')
-              ->orderBy('id', 'asc')
+              ->orderBy('id', 'desc')
             ->get();
 
         $customFields = CustomField::all();
@@ -57,7 +57,7 @@ class ContactController extends Controller
             $query->where('gender', $request->gender);
         }
 
-        $contacts = $query->with('customValues.customField')->orderBy('id', 'asc')->get();
+        $contacts = $query->with('customValues.customField')->orderBy('id', 'desc')->get();
 
         return view('contacts.partials.table', compact('contacts'))->render();
     }
@@ -188,6 +188,7 @@ class ContactController extends Controller
     {
         try {
             $contact->update(['status' => 'deleted']);
+            $contact->delete();
             return response()->json(['success' => true, 'message' => 'Contact deleted.']);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => 'Delete failed.'], 500);
@@ -395,14 +396,17 @@ class ContactController extends Controller
             $query->where('gender', $request->gender);
         }
 
-        if ($request->custom_field_id && $request->custom_value) {
+        if ($request->custom_field_id) {
             $query->whereHas('customValues', function ($q) use ($request) {
-                $q->where('custom_field_id', $request->custom_field_id)
-                ->where('value', 'like', '%' . $request->custom_value . '%');
+                $q->where('custom_field_id', $request->custom_field_id);
+
+                if ($request->custom_value) {
+                    $q->where('value', 'like', '%' . $request->custom_value . '%');
+                }
             });
         }
 
-        $contacts = $query->latest()->get();
+        $contacts = $query->orderBy('id', 'desc')->get();
 
         return response()->json([
             'html' => view('contacts.partials.table', compact('contacts'))->render()

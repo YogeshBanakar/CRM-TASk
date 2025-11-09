@@ -1,12 +1,3 @@
-<style>
-    @media (max-width: 576px) {
-        .btn-responsive { flex: 1 1 100%; }
-    }
-
-    @media (min-width: 577px) {
-        .btn-responsive { flex: 0 0 auto; }
-    }
-</style>
 <table class="table table-bordered">
     <thead>
         <tr>
@@ -57,11 +48,17 @@
                     @endif
                 </td>
 
-                <td class="align-middle">
-                    <div class="d-flex flex-wrap gap-1">
-                        <button class="btn btn-sm btn-info btn-responsive" onclick="editContact({{ $contact->id }})">Edit</button>
-                        <button class="btn btn-sm btn-danger btn-responsive" onclick="deleteContact({{ $contact->id }})">Delete</button>
-                        <button class="btn btn-sm btn-warning btn-responsive" onclick="initMerge({{ $contact->id }})">Merge</button>
+                <td>
+                    <div class="d-flex flex-wrap gap-2">
+                        <button class="btn btn-info btn-sm btn-responsive" onclick="editContact({{ $contact->id }})">
+                            <i class="bi bi-pencil-square"></i> Edit
+                        </button>
+                        <button class="btn btn-danger btn-sm btn-responsive" onclick="deleteContact({{ $contact->id }})">
+                            <i class="bi bi-trash"></i> Delete
+                        </button>
+                        <button class="btn btn-warning btn-sm btn-responsive" onclick="initMerge({{ $contact->id }})">
+                            <i class="bi bi-link"></i> Merge
+                        </button>
                     </div>
                 </td>
 

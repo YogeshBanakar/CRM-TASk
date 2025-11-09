@@ -1,6 +1,40 @@
 body {
-    background: #f8f9fa;
+    background-color: #f8f9fa !important;
+    font-family: "Inter", sans-serif;
 }
+
+.table {
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.table thead {
+    background: #ececec;
+    font-weight: 600;
+}
+
 .table th, .table td {
-    vertical-align: middle;
+    vertical-align: middle !important;
+    padding: 10px;
+}
+
+.btn-responsive {
+    flex: 1 1 auto;
+    min-width: 75px;
+}
+
+@media (max-width: 576px) {
+    .btn-responsive {
+        flex: 1 1 100%;
+        margin-bottom: 5px;
+    }
+}
+
+img.rounded-circle {
+    border: 2px solid #ddd;
+}
+
+.table tbody tr:hover {
+    background: #f2f6ff;
 }
