@@ -251,7 +251,6 @@ class ContactController extends Controller
                 $updated = true;
             }
 
-            // Merge custom fields
             foreach ($secondary->customValues as $cv) {
                 $existing = $master->customValues->where('custom_field_id', $cv->custom_field_id)->first();
 
@@ -267,12 +266,27 @@ class ContactController extends Controller
                         'action' => 'added'
                     ];
                 } elseif ($existing->value !== $cv->value) {
-                    $mergeLog['custom_fields'][] = [
-                        'field' => $cv->customField->name,
-                        'master_value' => $existing->value,
-                        'secondary_value' => $cv->value,
-                        'action' => 'kept_master'
-                    ];
+                    if ($cv->customField->type === 'checkbox') {
+                        $combined = collect(array_unique(array_merge(
+                            is_array(json_decode($existing->value, true)) ? json_decode($existing->value, true) : [$existing->value],
+                            is_array(json_decode($cv->value, true)) ? json_decode($cv->value, true) : [$cv->value]
+                        )));
+                        $existing->update([
+                            'value' => json_encode($combined->values())
+                        ]);
+                        $mergeLog['custom_fields'][] = [
+                            'field' => $cv->customField->name,
+                            'merged_value' => $combined->values(),
+                            'action' => 'merged_checkbox_values'
+                        ];
+                    } else {
+                        $mergeLog['custom_fields'][] = [
+                            'field' => $cv->customField->name,
+                            'master' => $existing->value,
+                            'secondary' => $cv->value,
+                            'action' => 'kept_master_value'
+                        ];
+                    }
                 }
             }
 
@@ -280,7 +294,6 @@ class ContactController extends Controller
                 $master->save();
             }
 
-            // Log merge (keep existing code)
             MergedContact::create([
                 'master_contact_id' => $master->id,
                 'merged_contact_id' => $secondary->id,
@@ -365,4 +378,35 @@ class ContactController extends Controller
 
         return $diff;
     }
+
+    public function filter(Request $request)
+    {
+        $query = Contact::whereNotIn('status', ['merged', 'deleted'])
+               ->with('customValues.customField');
+
+        if ($request->search) {
+            $query->where(function($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->search . '%')
+                ->orWhere('email', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        if ($request->gender) {
+            $query->where('gender', $request->gender);
+        }
+
+        if ($request->custom_field_id && $request->custom_value) {
+            $query->whereHas('customValues', function ($q) use ($request) {
+                $q->where('custom_field_id', $request->custom_field_id)
+                ->where('value', 'like', '%' . $request->custom_value . '%');
+            });
+        }
+
+        $contacts = $query->latest()->get();
+
+        return response()->json([
+            'html' => view('contacts.partials.table', compact('contacts'))->render()
+        ]);
+    }
+
 }

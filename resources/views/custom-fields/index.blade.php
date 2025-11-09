@@ -17,6 +17,7 @@
                         <option value="text">Text</option>
                         <option value="date">Date</option>
                         <option value="dropdown">Dropdown</option>
+                        <option value="checkbox">Checkbox</option>
                     </select>
                 </div>
                 <div class="col-md-3" id="optionsGroup" style="display:none;">
@@ -59,9 +60,13 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         $(document).ready(function () {
-            // Toggle dropdown options
             $('#fieldType').change(function() {
-                $('#optionsGroup').toggle($(this).val() === 'dropdown');
+                let type = $(this).val();
+                if (type === 'dropdown' || type === 'checkbox') {
+                    $('#optionsGroup').show();
+                } else {
+                    $('#optionsGroup').hide();
+                }
             });
             
             function ensureBaseOptions() {

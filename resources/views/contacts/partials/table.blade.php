@@ -1,51 +1,74 @@
+<style>
+    @media (max-width: 576px) {
+        .btn-responsive { flex: 1 1 100%; }
+    }
+
+    @media (min-width: 577px) {
+        .btn-responsive { flex: 0 0 auto; }
+    }
+</style>
 <table class="table table-bordered">
     <thead>
         <tr>
-            <th>ID</th>
-             <th>Profile</th>
+            <th>Sr.No</th>
+            <th>Profile</th>
             <th>Name</th>
             <th>Email</th>
             <th>Phone</th>
             <th>Gender</th>
-            <th>File</th>
+            <th>Custom Fields</th>
+            <th>Files</th>
             <th>Actions</th>
         </tr>
     </thead>
     <tbody>
-        @forelse($contacts as $index => $contact)
-        <tr>
-            <td>{{ $contact->id }}</td>
-            <td>
-                @if($contact->profile_image)
-                    <img src="{{ asset('storage/' . $contact->profile_image) }}" 
-                         alt="Profile" width="50" height="50" class="rounded-circle">
-                @else
-                    <img src="{{ asset('default-avatar.png') }}" 
-                         alt="Default" width="50" height="50" class="rounded-circle">
-                @endif
-            </td>
-            <td>{{ $contact->name }}</td>
-            <td>{{ $contact->email }}</td>
-            <td>{{ $contact->phone }}</td>
-            <td>{{ ucfirst($contact->gender) }}</td>
-            <td>
-                @if($contact->additional_file)
-                    <a href="{{ asset('storage/' . $contact->additional_file) }}" 
-                       target="_blank" class="btn btn-sm btn-outline-primary">
-                        View File
-                    </a>
-                @else
-                    <span class="text-muted">No File</span>
-                @endif
-            </td>
-            <td>
-                <button class="btn btn-sm btn-info" onclick="editContact({{ $contact->id }})">Edit</button>
-                <button class="btn btn-sm btn-danger" onclick="deleteContact({{ $contact->id }})">Delete</button>
-                <button class="btn btn-sm btn-warning" onclick="initMerge({{ $contact->id }})">Merge</button>
-            </td>
-        </tr>
+        @forelse($contacts as $contact)
+            <tr>
+                <td>{{ $loop->iteration }}</td>
+
+                <td>
+                    <img src="{{ $contact->profile_image ? asset('storage/'.$contact->profile_image) : asset('default-avatar.png') }}"
+                        width="50" height="50" class="rounded-circle">
+                </td>
+
+                <td>{{ $contact->name }}</td>
+                <td>{{ $contact->email }}</td>
+                <td>{{ $contact->phone }}</td>
+                <td>{{ ucfirst($contact->gender) }}</td>
+
+                <td>
+                    @foreach($contact->customValues as $cv)
+                        @php
+                            $val = json_decode($cv->value, true);
+                            $display = is_array($val) ? implode(', ', $val) : $cv->value;
+                        @endphp
+                        <div><strong>{{ $cv->customField->name }}:</strong> {{ $display }}</div>
+                    @endforeach
+
+                </td>
+
+                <td>
+                    @if($contact->additional_file)
+                        <a class="btn btn-sm btn-outline-primary" href="{{ asset('storage/'.$contact->additional_file) }}" target="_blank">
+                            View
+                        </a>
+                    @else
+                        <span class="text-muted">No File</span>
+                    @endif
+                </td>
+
+                <td class="align-middle">
+                    <div class="d-flex flex-wrap gap-1">
+                        <button class="btn btn-sm btn-info btn-responsive" onclick="editContact({{ $contact->id }})">Edit</button>
+                        <button class="btn btn-sm btn-danger btn-responsive" onclick="deleteContact({{ $contact->id }})">Delete</button>
+                        <button class="btn btn-sm btn-warning btn-responsive" onclick="initMerge({{ $contact->id }})">Merge</button>
+                    </div>
+                </td>
+
+
+            </tr>
         @empty
-        <tr><td colspan="6" class="text-center">No contacts found.</td></tr>
+            <tr><td colspan="9" class="text-center">No contacts found.</td></tr>
         @endforelse
     </tbody>
 </table>

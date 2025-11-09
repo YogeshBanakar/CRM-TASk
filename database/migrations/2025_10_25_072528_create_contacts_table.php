@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('profile_image')->nullable();
             $table->string('additional_file')->nullable();
             $table->enum('status', ['active', 'merged', 'deleted'])->default('active');
+            $table->softDeletes();
             $table->timestamps();
         });
     }
